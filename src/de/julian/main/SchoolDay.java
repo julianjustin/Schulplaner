@@ -1,46 +1,74 @@
 package de.julian.main;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
 
 public class SchoolDay {
 
-    // TODO Create new useful methods
+    private SchoolSubject[] subjectsArray;
+    private SchoolSubject currentSubject;
 
-    private Queue<SchoolSubject> subjectQueue;
-    private int subjectsSize;
+    private int current;
 
-    public SchoolDay(String ... subjectsArr) {
-        subjectQueue = new LinkedList<>();                      // TODO Look for an alternative
+    public SchoolDay(String ... subjects) {
+        this.subjectsArray = new SchoolSubject[subjects.length];
+        this.current = 0;
 
-        if(subjectsArr.length > 6) {
+        if(subjects.length > 6) {
             System.err.println("You can only have 6 courses!");
             return;
         }
 
-        // TODO Maybe find a new solution
-        int nr = 1;                         // Adding courses and setting nr for each course
-        for (String e : subjectsArr) {
-            SchoolSubject subject = SchoolSubject.valueOf(e);
-            subjectQueue.add(subject);
-            subject.setId(nr);
-            nr++;
+        // Adding Subject instances to Array and initialize with ID
+        for (int i = 0; i < subjectsArray.length; i++) {
+            subjectsArray[i] = SchoolSubject.valueOf(subjects[i]);
+            subjectsArray[i].setId(i+1);
         }
 
-        subjectsSize = subjectQueue.size();
+        setCurrentSubject(subjectsArray[current]);
     }
 
-    public SchoolSubject getSubject(int id) {
-        SchoolSubject solution = null;
-        for (SchoolSubject e : subjectQueue) {
-            if(e.getId() == id) {
-                solution = e;
+    public void nextSubject() {
+        if(current == 5)
+            return;
+
+        current++;
+        setCurrentSubject(subjectsArray[current]);
+    }
+
+    public ArrayList<String> getUnfinishedHomeWork() {
+        ArrayList<String> solution = new ArrayList<>();
+
+        for (SchoolSubject subject : subjectsArray) {
+            if(subject.hasHomeWork()) {
+                if(!subject.getHomeWork().isDone()) {
+                    solution.add(subject.getName() + ": " + subject.getHomeWork().getTask());
+                }
             }
         }
+
         return solution;
     }
 
-    public int getSizeOfSubjects() {
-        return subjectsSize;
+    // Getters and Setters
+
+    public SchoolSubject getCurrentSubject() {
+        return currentSubject;
+    }
+
+    public void setCurrentSubject(SchoolSubject currentSubject) {
+        this.currentSubject = currentSubject;
+    }
+
+    // Unnecessary
+    public String[] getSubjects() {
+        String[] solution = new String[subjectsArray.length];
+
+        for (int i = 0; i < subjectsArray.length; i++) {
+            solution[i] = subjectsArray[i].getId() + ": " + subjectsArray[i].getName();
+        }
+
+        return solution;
     }
 }
